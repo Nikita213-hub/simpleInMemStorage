@@ -7,7 +7,6 @@ import (
 )
 
 type DeleteHandler struct {
-	Path string
 	Strg *storage.Storage
 }
 
