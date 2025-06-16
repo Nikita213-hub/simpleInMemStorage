@@ -1,10 +1,40 @@
 package handlers
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/Nikita213-hub/simpleInMemStorage/internal/storage"
+)
 
 type AddHandler struct {
+	Path string
+	Strg *storage.Storage
 }
 
 func (ah *AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
+	if r.Header.Get("Content-Type") != "application/json" {
+		w.WriteHeader(400)
+		w.Write([]byte("Incorrect content type"))
+		return
+	}
+	bodyDecoced := struct {
+		Key   string      `json:"key"`
+		Value interface{} `json:"value"`
+	}{}
+	err := json.NewDecoder(r.Body).Decode(&bodyDecoced)
+	defer r.Body.Close()
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte("Unexpected error"))
+		return
+	}
+	err = ah.Strg.Put(bodyDecoced.Key, bodyDecoced.Value)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte("Unexpected error"))
+		return
+	}
+	w.WriteHeader(200)
+	w.Write([]byte("Value was added successfully"))
 }

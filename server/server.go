@@ -23,6 +23,7 @@ func (s *Server) Run(handlers ...http.Handler) error {
 	fmt.Println("Listening ", s.addr, "...")
 	s.mux = http.NewServeMux()
 	for i, v := range handlers {
+		fmt.Println(v)
 		s.mux.Handle("/test/"+strconv.Itoa(i), v)
 	}
 	err := http.ListenAndServe(s.addr, s.mux)
