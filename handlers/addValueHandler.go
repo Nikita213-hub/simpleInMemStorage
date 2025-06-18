@@ -17,8 +17,13 @@ func (ah *AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Incorrect content type"))
 		return
 	}
+	key := r.PathValue("key")
+	if len(key) == 0 {
+		w.WriteHeader(400)
+		w.Write([]byte("Incorrect query params"))
+		return
+	}
 	bodyDecoced := struct {
-		Key   string      `json:"key"`
 		Value interface{} `json:"value"`
 	}{}
 	err := json.NewDecoder(r.Body).Decode(&bodyDecoced)
@@ -28,7 +33,7 @@ func (ah *AddHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Unexpected error"))
 		return
 	}
-	err = ah.Strg.Put(bodyDecoced.Key, bodyDecoced.Value)
+	err = ah.Strg.Put(key, bodyDecoced.Value)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte("Unexpected error"))

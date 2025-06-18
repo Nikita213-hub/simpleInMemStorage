@@ -34,6 +34,12 @@ func (s *Storage) Get(key string) interface{} {
 	return v
 }
 
+func (s *Storage) GetAll() map[string]interface{} {
+	s.mx.Lock()
+	defer s.mx.Unlock()
+	return s.store
+}
+
 func (s *Storage) Delete(key string) error {
 	s.mx.Lock()
 	defer s.mx.Unlock()
