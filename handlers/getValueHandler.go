@@ -13,18 +13,30 @@ type GetHandler struct {
 }
 
 func (gh *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	if len(params) != 1 {
-		w.WriteHeader(400)
-		w.Write([]byte("Incorrect request"))
+	key := r.PathValue("key")
+	if len(key) == 0 {
+		values := gh.Strg.GetAll()
+		res := make([]struct {
+			Key   string      `json:"key"`
+			Value interface{} `json:"value"`
+		}, len(values))
+		for k, v := range values {
+			res = append(res, struct {
+				Key   string      `json:"key"`
+				Value interface{} `json:"value"`
+			}{
+				Key:   k,
+				Value: v,
+			})
+		}
+		err := json.NewEncoder(w).Encode(res)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte("Unexpected error"))
+			return
+		}
 		return
 	}
-	if !params.Has("key") {
-		w.WriteHeader(400)
-		w.Write([]byte("Incorrect request"))
-		return
-	}
-	key := params.Get("key")
 	val := gh.Strg.Get(key)
 	if val == nil {
 		w.WriteHeader(400)

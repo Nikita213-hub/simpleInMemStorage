@@ -12,18 +12,12 @@ type DeleteHandler struct {
 }
 
 func (dh *DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	if len(params) != 1 {
+	key := r.PathValue("key")
+	if len(key) == 0 {
 		w.WriteHeader(400)
 		w.Write([]byte("Incorrect request"))
 		return
 	}
-	if !params.Has("key") {
-		w.WriteHeader(400)
-		w.Write([]byte("Incorrect request"))
-		return
-	}
-	key := params.Get("key")
 	err := dh.Strg.Delete(key)
 	if err != nil {
 		w.WriteHeader(400)

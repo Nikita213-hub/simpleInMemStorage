@@ -13,15 +13,15 @@ func main() {
 	server := server.NewServer("localhost", "8080")
 	strg := storage.NewStorage()
 	AddHandler := &handlers.AddHandler{
-		Path: "/add",
+		Path: "/values/{key}",
 		Strg: strg,
 	}
 	GetHandler := &handlers.GetHandler{
-		Path: "/get",
+		Path: "/values/{key}",
 		Strg: strg,
 	}
 	DeleteHandler := &handlers.DeleteHandler{
-		Path: "/delete",
+		Path: "/values/{key}",
 		Strg: strg,
 	}
 	err := server.Run(AddHandler, GetHandler, DeleteHandler)
