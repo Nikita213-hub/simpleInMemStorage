@@ -18,6 +18,12 @@ func main() {
 			Strg: strg,
 		},
 	}
+	GetAllHandler := &handlers.BaseHandler{
+		Path: "GET /values",
+		Handler: &handlers.GetAllHandler{
+			Strg: strg,
+		},
+	}
 	GetHandler := &handlers.BaseHandler{
 		Path: "GET /values/{key}",
 		Handler: &handlers.GetHandler{
@@ -25,12 +31,12 @@ func main() {
 		},
 	}
 	DeleteHandler := &handlers.BaseHandler{
-		Path: "DELETE //values/{key}",
+		Path: "DELETE /values/{key}",
 		Handler: &handlers.DeleteHandler{
 			Strg: strg,
 		},
 	}
-	err := server.Run(AddHandler, GetHandler, DeleteHandler)
+	err := server.Run(AddHandler, GetHandler, DeleteHandler, GetAllHandler)
 	if err != nil {
 		panic(err)
 	}
