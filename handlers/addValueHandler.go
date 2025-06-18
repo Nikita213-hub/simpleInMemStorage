@@ -8,7 +8,6 @@ import (
 )
 
 type AddHandler struct {
-	Path string
 	Strg *storage.Storage
 }
 

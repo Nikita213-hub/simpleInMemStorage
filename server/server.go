@@ -3,7 +3,8 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"strconv"
+
+	"github.com/Nikita213-hub/simpleInMemStorage/handlers"
 )
 
 type Server struct {
@@ -19,12 +20,11 @@ func NewServer(host, port string) *Server {
 	}
 }
 
-func (s *Server) Run(handlers ...http.Handler) error {
+func (s *Server) Run(handlers ...*handlers.BaseHandler) error {
 	fmt.Println("Listening ", s.addr, "...")
 	s.mux = http.NewServeMux()
-	for i, v := range handlers {
-		fmt.Println(v)
-		s.mux.Handle("/test/"+strconv.Itoa(i), v)
+	for _, v := range handlers {
+		s.mux.Handle(v.Path, v.Handler)
 	}
 	err := http.ListenAndServe(s.addr, s.mux)
 	if err != nil {
